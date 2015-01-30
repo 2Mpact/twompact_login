@@ -77,7 +77,8 @@ function twompact_login_loggedin_box() {
   $result = '';
 
   if(user_is_logged_in()) {
-    $extranet_link = '<a href="">' . t('Go to the extranet') . '</a>';
+    $linktaal = '/' . $taal;
+    $extranet_link = '<a href="' . $linktaal . '/extranet">' . t('Go to the extranet') . '</a>';
 
     $result =<<<STR
 <div class="logged_in_box">
