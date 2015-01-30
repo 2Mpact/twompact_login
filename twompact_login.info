@@ -1,0 +1,6 @@
+name = twompact_login
+description = Custom logged in user block
+core = 7.x
+package = 2Mpact
+
+stylesheets[screen][] = css/twompact_login.css

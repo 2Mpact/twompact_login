@@ -1,0 +1,129 @@
+<?php
+
+/**
+ * Implementatie van hook_block_info - declaring blocks
+ *
+ * @return array  $blocks   The declared blocks
+ */
+function twompact_login_block_info() {
+  $blocks['login_loggedin_box'] = array(
+    'info' => t('Logged in box'),
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implementation of hook_block_view - giving content to blocks
+ *
+ * @param string $delta     The delta of the block we wish to render
+ * @return array $block     The block we wish to render
+ */
+function twompact_login_block_view($delta = '') {
+  switch($delta) {
+    case 'login_loggedin_box':
+      $block = array(
+        'subject' => '',
+        'content' => twompact_login_loggedin_box(),
+      );
+      break;
+  }
+
+  return $block;
+}
+
+/**
+ * Creates a simple block with some options for logged in users
+ */
+function twompact_login_loggedin_box() {
+  global $user;
+  global $language;
+  $taal = $language->language;
+
+  $welcome = t('Welcome @username.');
+
+  // contact gekoppeld aan user ophalen
+  if(module_exists('civicrm')) {
+    civicrm_initialize();
+
+    $cid = db_select('civicrm_uf_match', 'cu')
+      ->fields('cu', array('contact_id'))
+      ->condition('uf_id', $user->uid)
+      ->execute()
+      ->fetchField();
+
+    try {
+      $contact = civicrm_api3('Contact', 'getsingle', array(
+        'sequential' => 1,
+        'id' => $cid,
+      ));
+    }
+    catch(CiviCRM_API3_Exception $e) {
+      watchdog('twompact login', $e->__toString());
+    }
+
+    $profiel_link = '<a href="/profiel">' . t('Keep your profile up-to-date') . '</a>';
+    $welcome = str_replace('@username', $contact['first_name'] . ' ' . $contact['last_name'], $welcome);
+    $picture = '';
+    $percentage = twompact_login_profile_completion_calculation($contact);
+    $profile_percentage = '<p>' . t('Profile') . ' <span class="percentile">' . $percentage . '%</span> ' . t('complete') . '</p>';
+  }
+  else {
+    $profiel_link = '<a href="/user/' . $user->uid . '/edit">' . t('Change your login data') . '</a>';
+    $welcome = str_replace('@username', $user->name, $welcome);
+    $profile_percentage = '';
+  }
+
+  $result = '';
+
+  if(user_is_logged_in()) {
+    $extranet_link = '<a href="">' . t('Go to the extranet') . '</a>';
+
+    $result =<<<STR
+<div class="logged_in_box">
+  <div class="profile_links">
+    <p>
+      $welcome $profiel_link
+      <br />
+      $extranet_link
+    </p>
+  </div>
+  <div class="profile_rechts">
+    <!--<div class="profile_picture">$picture</div>-->
+    <div class="profile_percentage">$profile_percentage</div>
+  </div>
+</div>
+<div class="clear">&nbsp;</div>
+STR;
+  }
+
+  return $result;
+}
+
+function twompact_login_profile_completion_calculation($contact = NULL) {
+  global $user;
+
+  if(is_null($contact)) {
+    return '0';
+  }
+  else {
+    // deze array bevat de waarde voor elk veld waar rekening met moet gehouden worden
+    $veld_waarde = array(
+      'first_name' => 35,
+      'last_name' => 35,
+      'email' => 30,
+    );
+
+    if(!empty($veld_waarde) && is_array($veld_waarde)) {
+      $result = 0;
+
+      foreach($veld_waarde as $veldnaam => $veldwaarde) {
+        if(!empty($contact[$veldnaam])) {
+          $result += $veldwaarde;
+        }
+      }
+    }
+  }
+
+  return $result;
+}

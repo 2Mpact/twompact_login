@@ -1,0 +1,28 @@
+/*
+    Document   : twompact_login
+    Created on : 10-dec-2014, 11:25:05
+    Author     : Tim
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/*
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+.profile_links {
+    float: left;
+    width: 65%;
+}
+
+.profile_rechts {
+    float: left;
+    width: 34%;
+}
+
+.profile_picture,
+.profile_percentage{
+    float: left;
+    width: auto;
+}

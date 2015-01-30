@@ -1,0 +1,61 @@
+# $Id$
+#
+# Dutch translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  twompact_login.module: n/a
+#  twompact_login.info: n/a
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2015-01-30 16:48+0100\n"
+"PO-Revision-Date: 2015-01-30 16:51+0100\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Dutch <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"Language: nl\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#: twompact_login.module:10
+msgid "Logged in box"
+msgstr "Ingelogd blok"
+
+#: twompact_login.module:43
+msgid "Welcome @username."
+msgstr "Welkom @username"
+
+#: twompact_login.module:65
+msgid "Keep your profile up-to-date"
+msgstr "Houd uw profiel op punt"
+
+#: twompact_login.module:69
+msgid "Profile"
+msgstr "Profiel"
+
+#: twompact_login.module:69
+msgid "complete"
+msgstr "compleet"
+
+#: twompact_login.module:72
+msgid "Change your login data"
+msgstr "Pas uw login informatie aan"
+
+#: twompact_login.module:80
+msgid "Go to the extranet"
+msgstr "Ga naar het extranet"
+
+#: twompact_login.info:0
+msgid "twompact_login"
+msgstr "twompact_login"
+
+#: twompact_login.info:0
+msgid "Custom logged in user block"
+msgstr "Aangepast ingelogde gebruiker blok"
+
+#: twompact_login.info:0
+msgid "2Mpact"
+msgstr "2Mpact"
