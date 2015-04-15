@@ -57,16 +57,26 @@ function twompact_login_loggedin_box() {
         'sequential' => 1,
         'id' => $cid,
       ));
+
+      $profiel_link = '<a href="/profiel">' . t('Keep your profile up-to-date') . '</a>';
+      $picture = '';
+      $percentage = twompact_login_profile_completion_calculation($contact);
+      $profile_percentage = '<p>' . t('Profile') . ' <span class="percentile">' . $percentage . '%</span> ' . t('complete') . '</p>';
+
+      if(!empty($contact['first_name']) || !empty($contact['last_name'])) {
+        $welcome = str_replace('@username', $contact['first_name'] . ' ' . $contact['last_name'], $welcome);
+      }
+      else {
+        $welcome = str_replace('@username', $user->name, $welcome);
+      }
     }
     catch(CiviCRM_API3_Exception $e) {
       watchdog('twompact login', $e->__toString());
-    }
 
-    $profiel_link = '<a href="/profiel">' . t('Keep your profile up-to-date') . '</a>';
-    $welcome = str_replace('@username', $contact['first_name'] . ' ' . $contact['last_name'], $welcome);
-    $picture = '';
-    $percentage = twompact_login_profile_completion_calculation($contact);
-    $profile_percentage = '<p>' . t('Profile') . ' <span class="percentile">' . $percentage . '%</span> ' . t('complete') . '</p>';
+      $profiel_link = '<a href="/user/' . $user->uid . '/edit">' . t('Change your login data') . '</a>';
+      $welcome = str_replace('@username', $user->name, $welcome);
+      $profile_percentage = '';
+    }
   }
   else {
     $profiel_link = '<a href="/user/' . $user->uid . '/edit">' . t('Change your login data') . '</a>';
@@ -108,21 +118,40 @@ function twompact_login_profile_completion_calculation($contact = NULL) {
     return '0';
   }
   else {
-    // deze array bevat de waarde voor elk veld waar rekening met moet gehouden worden
-    $veld_waarde = array(
-      'first_name' => 35,
-      'last_name' => 35,
-      'email' => 30,
+    // we bepalen hoeveel informatie het contact reeds heeft ingevuld.  Het contact krijgen we mee als functie argument
+    // maar we zullen nog een paar api calls moeten doen om te bepalen of er een telefoon en primair adres is ingegeven
+    $tmp_result = 0;
+    $result = 0;
+
+    // standaard contact velden
+    $contact_velden = array(
+      'first_name',
+      'last_name',
+      'email',
+      'gender_id',
+      'phone',
+      'street_address',
+      'city',
+      'postal_code',
     );
 
-    if(!empty($veld_waarde) && is_array($veld_waarde)) {
-      $result = 0;
-
-      foreach($veld_waarde as $veldnaam => $veldwaarde) {
+    if(!empty($contact_velden) && is_array($contact_velden)) {
+      foreach($contact_velden as $tmp_idx => $veldnaam) {
         if(!empty($contact[$veldnaam])) {
-          $result += $veldwaarde;
+          $tmp_result += 1;
         }
       }
+    }
+
+    // bepalen hoeveel percent we ingevuld hebben gebaseerd op het totaal aantal velden dat gecontroleerd wordt
+    if($tmp_result != 0) {
+      $totaal_aantal_velden = count($contact_velden);
+
+      // percentage berekenen
+      $result = ceil((100 / $totaal_aantal_velden) * $tmp_result);
+    }
+    else {
+      $result = 0;
     }
   }
 
